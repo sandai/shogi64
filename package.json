@@ -1,0 +1,52 @@
+{
+  "name": "shogi64",
+  "description": "Shogi64 encoding/decoding for The Shogi(Japanese Chess) board.",
+  "version": "0.0.1",
+  "author": "sandai <sandai310@gmail.com>",
+  "devDependencies": {
+    "del": "^1.2.0",
+    "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-header": "^1.2.2",
+    "gulp-jasmine": "^2.0.1",
+    "gulp-jshint": "^1.11.0",
+    "gulp-karma": "0.0.4",
+    "gulp-strip-code": "^0.1.2",
+    "gulp-util": "^3.0.6",
+    "gulp-webpack": "^1.5.0",
+    "jasmine-core": "^2.3.4",
+    "jshint-stylish": "^2.0.1",
+    "karma": "^0.12.37",
+    "karma-chrome-launcher": "^0.2.0",
+    "karma-jasmine": "^0.3.5",
+    "karma-jasmine-html-reporter": "^0.1.8",
+    "karma-phantomjs-launcher": "^0.2.0",
+    "karma-webpack": "^1.5.1",
+    "require-dir": "^0.3.0",
+    "run-sequence": "^1.1.1",
+    "webpack": "^1.10.0",
+    "webpack-dev-server": "^1.10.0"
+  },
+  "files": [
+    "lib",
+    "README.md",
+    "index.js",
+    "package.json",
+    "LICENSE"
+  ],
+  "keywords": [
+    "decoding",
+    "encoding",
+    "shogi",
+    "shogi64"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sandai/shogi64.git"
+  },
+  "scripts": {
+    "test": "gulp test"
+  }
+}

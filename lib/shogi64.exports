@@ -1,0 +1,5 @@
+if ("process" in global) {
+  module["exports"] = shogi64;
+}
+
+global["shogi64" in global ? "shogi64_" : "shogi64"] = shogi64;
