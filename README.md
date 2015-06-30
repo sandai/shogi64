@@ -332,6 +332,7 @@ var boardObj = shogi64.decode('poUAACMaqtYhwHgAAAAPQdTnd3vMgAA');
 
 // true
 console.log(JSON.stringify(board) === JSON.stringify(boardObj));
+</script>
 ```
 
 ### Node:
@@ -339,7 +340,7 @@ console.log(JSON.stringify(board) === JSON.stringify(boardObj));
 #### installation
 
 ```sh
-npm install shogi64 --save-dev
+npm install shogi64 --save
 ```
 
 #### example
