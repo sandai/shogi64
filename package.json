@@ -1,7 +1,7 @@
 {
   "name": "shogi64",
   "description": "Shogi64 encoding/decoding for The Shogi(Japanese Chess) board.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "sandai <sandai310@gmail.com>",
   "devDependencies": {
     "del": "^1.2.0",
