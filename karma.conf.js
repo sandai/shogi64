@@ -1,8 +1,6 @@
 // Karma configuration
 // Generated on Fri Dec 26 2014 22:42:17 GMT+0900 (JST)
 
-var path = require('path');
-
 module.exports = function(config) {
   config.set({
 
