@@ -1,10 +1,10 @@
 # shogi64.js
 
-将棋の盤面をShogi64にエンコード/デコードするJavaScript製のライブラリ。
+将棋の局面をShogi64にエンコード/デコードするライブラリ。
 
 ## About Shogi64
 
-Shogi64とは盤面データをバイナリに変換し、さらにBase64urlに変換するまでを形式化したものである。
+Shogi64とは局面データをバイナリに変換し、さらにBase64urlに変換するまでを形式化したものである。
 
 ### Base64url
 
@@ -22,11 +22,11 @@ Base64urlはBase64をURLで利用しやすくしたエンコード方式であ�
  * https://ja.wikipedia.org/wiki/Base64
  * http://wiki.suikawiki.org/n/base64url
 
-## Board Data Format
+## Position Data Format
 
-プログラム上での盤面データのフォーマットは以下の通り。
+プログラム上での局面データのフォーマットは以下の通り。
 
-Board {
+Position {
 
 * turn[boolean]
 * board[array]
@@ -62,7 +62,7 @@ Board {
 
 ### Piece Table
 
-上記のBoard.boardプロパティで扱う駒や空白は数値に変換して扱う。それぞれ対応する数値は以下の通りである。
+上記のPosition.boardプロパティで扱う駒や空白は数値に変換して扱う。それぞれ対応する数値は以下の通りである。
 
 | 駒種 | 先手 | 後手 |
 |------|------|------|
@@ -82,12 +82,12 @@ Board {
 | 馬   | 13	  | -13	 |
 | 龍   | 14	  | -14	 |
 
-### Example Board Data
+### Example Position Data
 
-以上の仕様を用いて書かれた初期盤面のコードを紹介する。
+以上の仕様を用いて書かれた初期局面のコードを紹介する。
 
 ```js
-var board = {
+var position = {
   'turn': true,
   'board':[-2,-3,-4,-5,-8,-5,-4,-3,-2,
            0,-7,0,0,0,0,0,-6,0,
@@ -105,7 +105,7 @@ var board = {
 
 ## Binary Data Format
 
-盤面データのコードをハフマン符号で構成されたバイナリに変換する際にShogi64では2通りのフォーマットがあり、**Normal Mode**と**Mixed Mode**が存在する。
+局面データのコードをハフマン符号で構成されたバイナリに変換する際にShogi64では2通りのエンコードモードがあり、**Normal Mode**と**Mixed Mode**が存在する。
 
 ### Normal Mode
 
@@ -117,21 +117,21 @@ var board = {
 
 ### Mixed Mode
 
-Normal Modeのフォーマットで変換できない盤面(ルール上問題があるが、玉が複数あったり二歩であるといったケースなど)はこちらのフォーマットで変換される。
+Normal Modeのフォーマットで変換できない局面(ルール上問題があるが、玉が複数あったり二歩であるといったケースなど)はこちらのフォーマットで変換される。
 
 | 手番  | モード | 全ての駒 | 先手持ち駒 | 後手持ち駒 |
 |-------|--------|----------|------------|------------|
 | 1 bit | 1 bit	 | ? bit	| ? bit		 | ? bit	  |
 
-#### 手番
+#### Turn(手番)
 
 1bit固定長で、手番が先手であれば**1**、後手であれば**0**とする。
 
-#### モード
+#### Mode(モード)
 
 1bit固定長で、Mixed Modeであれば**1**、Normal Modeであれば**0**とする。
 
-#### 玉の位置
+#### King Coordinate(玉の位置)
 
 7bit固定長で先手と後手で合計14bitとなる。盤面左上(配列の最初の要素)から右下(配列の最後の要素)までを1〜81として、これを2進数に変換した0000001〜1010001を使って表される。0(0000000)は玉が無いことを意味する。
 
@@ -147,7 +147,7 @@ Normal Modeのフォーマットで変換できない盤面(ルール上問題�
 | ..	   | ..		  | .. | .. | .. | .. | .. | ..		 | ..	   | 八    |
 | ..	   | ..		  | .. | .. | .. | .. | .. | 1010000 | 1010001 | 九    |
 
-#### 歩の位置
+#### Pawn Coordinate(歩の位置)
 
 9筋から1筋にかけて歩が出現する位置(段)を符号化して順に並べられたデータとなる。こうすることで符号の並び順で筋、符号で段を表す仕組みとなっている。歩が存在しない筋も符号化されるが、一段(後手なら九段)は歩が置けないのであらかじめ除かれる。
 
@@ -165,7 +165,7 @@ Normal Modeのフォーマットで変換できない盤面(ルール上問題�
 | 九	   | 一	      | 11111110	 |
 | 二	   | 八	      | 11111111     |
 
-#### その他の駒
+#### Ohter Piece(その他の駒)
 
 玉と歩を除いた全ての駒と空白を盤面左上(配列の最初の要素)から順に符号化して並べられたデータとなる。それぞれ対応する符号は以下の表の通りとなる。
 
@@ -190,7 +190,7 @@ Normal Modeのフォーマットで変換できない盤面(ルール上問題�
 * ※1 変換する際に先手は1、後手は0を符号の末尾に付け加える
 * ※2 ハフマン符号は[こちら](http://www.geocities.co.jp/CollegeLife-Cafe/8331/shogi/shogi2.html)を参考
 
-#### 全ての駒
+#### All Piece(全ての駒)
 
 全ての駒と空白を盤面左上(配列の最初の要素)から順に符号化して並べられたデータとなる。Mixed Modeではこちらの表の通りに符号化される。
 
@@ -215,11 +215,11 @@ Normal Modeのフォーマットで変換できない盤面(ルール上問題�
 * ※1 変換する際に先手は1、後手は0を符号の末尾に付け加える
 * ※2 ハフマン符号は[こちら](http://www.geocities.co.jp/CollegeLife-Cafe/8331/shogi/)を参考
 
-#### 持ち駒
+#### Hands(持ち駒)
 
 保有している持ち駒の数を歩、香、桂、銀、金、角、飛の順に符号化して並べられたデータとなる。
 
-##### 歩
+##### Pawn(歩)
 
 | 数 | ハフマン符号      |
 |----|-------------------|
@@ -243,7 +243,7 @@ Normal Modeのフォーマットで変換できない盤面(ルール上問題�
 | 17 | 11111111111111110 |
 | 18 | 11111111111111111 |
 
-##### 香、桂、銀、金
+##### Minor Piece(香、桂、銀、金)
 
 | 数 | ハフマン符号      |
 |----|-------------------|
@@ -253,7 +253,7 @@ Normal Modeのフォーマットで変換できない盤面(ルール上問題�
 | 3	 | 1110				 |
 | 4	 | 1111				 |
 
-##### 角、飛
+##### Major Piece(角、飛)
 
 | 数 | ハフマン符号      |
 |----|-------------------|
@@ -263,10 +263,10 @@ Normal Modeのフォーマットで変換できない盤面(ルール上問題�
 
 ## Encode Example
 
-エンコードの流れを初期盤面を使って大まかに紹介する。
+エンコードの流れを初期局面を使って大まかに紹介する。
 
 ```js
-var board = {
+var position = {
   'turn': true,
   'board':[-2,-3,-4,-5,-8,-5,-4,-3,-2,
            0,-7,0,0,0,0,0,-6,0,
@@ -298,7 +298,7 @@ var board = {
 
     poUAACMaqtYhwHgAAAAPQdTnd3vMgAA
 
-以上の流れで盤面データはエンコードされる。デコードについてはこの逆をするだけなので省略する。
+以上の流れで局面データはエンコードされる。デコードについてはこの逆をするだけなので省略する。
 
 ## Usage
 
@@ -307,8 +307,7 @@ var board = {
 ```html
 <script src="shogi64-x.x.x.min.js"></script>
 <script>
-
-var board = {
+var position = {
   'turn': true,
   'board':[-2,-3,-4,-5,-8,-5,-4,-3,-2,
            0,-7,0,0,0,0,0,-6,0,
@@ -324,14 +323,14 @@ var board = {
 };
 
 // encode
-// shogi64Str => poUAACMaqtYhwHgAAAAPQdTnd3vMgAA
-var shogi64Str = shogi64.encode(board);
+// encodeResult => poUAACMaqtYhwHgAAAAPQdTnd3vMgAA
+var encodeResult = shogi64.encode(position);
 
 // decode
-var boardObj = shogi64.decode('poUAACMaqtYhwHgAAAAPQdTnd3vMgAA');
+var decodeResult = shogi64.decode('poUAACMaqtYhwHgAAAAPQdTnd3vMgAA');
 
 // true
-console.log(JSON.stringify(board) === JSON.stringify(boardObj));
+console.log(JSON.stringify(position) === JSON.stringify(decodeResult));
 </script>
 ```
 
@@ -348,7 +347,7 @@ npm install shogi64 --save
 ```js
 var shogi64 = require('shogi64');
 
-var board = {
+var position = {
   'turn': true,
   'board':[-2,-3,-4,-5,-8,-5,-4,-3,-2,
            0,-7,0,0,0,0,0,-6,0,
@@ -364,14 +363,14 @@ var board = {
 };
 
 // encode
-// shogi64Str => poUAACMaqtYhwHgAAAAPQdTnd3vMgAA
-var shogi64Str = shogi64.encode(board);
+// encodeResult => poUAACMaqtYhwHgAAAAPQdTnd3vMgAA
+var encodeResult = shogi64.encode(position);
 
 // decode
-var boardObj = shogi64.decode('poUAACMaqtYhwHgAAAAPQdTnd3vMgAA');
+var decodeResult = shogi64.decode('poUAACMaqtYhwHgAAAAPQdTnd3vMgAA');
 
 // true
-console.log(JSON.stringify(board) === JSON.stringify(boardObj));
+console.log(JSON.stringify(position) === JSON.stringify(decodeResult));
 ```
 
 ## Licence
