@@ -4,7 +4,7 @@ var shogi64 = require('../lib/main');
 
 describe('main.js', function() {
   // 初期盤面
-  // var board1 = {
+  // var position1 = {
   //   'turn': true,
   //   'board':[-2,-3,-4,-5,-8,-5,-4,-3,-2,
   //            0,-7,0,0,0,0,0,-6,0,
@@ -19,7 +19,7 @@ describe('main.js', function() {
   //             'white': {'FU':0, 'KY':0, 'KE': 0, 'GI': 0, 'KI': 0, 'KA': 0, 'HI': 0}}
   // };
 
-  var board = {
+  var position = {
     'turn': true,
     'board':[0,-3,0,-5,-8,-5,0,-3,-2,
              0,0,0,0,0,0,0,0,0,
@@ -34,7 +34,7 @@ describe('main.js', function() {
               'white': {'FU':3, 'KY':2, 'KE': 0, 'GI': 1, 'KI': 0, 'KA': 0, 'HI': 2}}
   };
 
-  var mixboard = {
+  var mixposition = {
     'turn': true,
     'board':[0,-3,0,-5,-8,-5,0,-3,-2,
              0,0,0,0,0,0,0,0,0,
@@ -57,19 +57,19 @@ describe('main.js', function() {
 
   describe('encodeBoardToBits(board)', function() {
     it('局面をハフマン符号にして返す', function() {
-      expect(shogi64.encodeBoardToBits(board)).toEqual('1010011010000101001101100011001101100110000011000110000101010100110001000000000000000000000000000000000000000000000001111010000000011001110111011101101100100110011001001101100100011');
+      expect(shogi64.encodePositionToBits(position)).toEqual('1010011010000101001101100011001101100110000011000110000101010100110001000000000000000000000000000000000000000000000001111010000000011001110111011101101100100110011001001101100100011');
     });
     it('局面をミックスモードのハフマン符号にして返す', function() {
-      expect(shogi64.encodeBoardToBits(mixboard)).toEqual('1101110000110101110100110100111000110000000000000100010010010010001000000000000000010100100010100000001011010010110101010011111010000000011100111110111011111010111011011100100110011001001101100100011');
+      expect(shogi64.encodePositionToBits(mixposition)).toEqual('1101110000110101110100110100111000110000000000000100010010010010001000000000000000010100100010100000001011010010110101010011111010000000011100111110111011111010111011011100100110011001001101100100011');
     });
   });
 
   describe('encode(board)', function() {
     it('局面をshogi64にして返す', function() {
-      expect(shogi64.encode(board)).toEqual('poU2M2YMYVTEAAAAAAAHoBnd2yZk2Rg');
+      expect(shogi64.encode(position)).toEqual('poU2M2YMYVTEAAAAAAAHoBnd2yZk2Rg');
     });
     it('局面をshogi64にして返す', function() {
-      expect(shogi64.encode(mixboard)).toEqual('3DXTTjAARJIgABSKAtLVPoBz7vrtyZk2Rg');
+      expect(shogi64.encode(mixposition)).toEqual('3DXTTjAARJIgABSKAtLVPoBz7vrtyZk2Rg');
     });
   });
 
@@ -84,16 +84,16 @@ describe('main.js', function() {
 
   describe('decodeBitsToBoard(bit)', function() {
     it('バイナリをboardに変換して返す', function() {
-      expect(shogi64.decodeBitsToBoard('101001101000010100110110001100110110011000001100011000010101010011000100000000000000000000000000000000000000000000000111101000000001100111011101110110110010011001100100110110010001100000')).toEqual(board);
+      expect(shogi64.decodeBitsToPosition('101001101000010100110110001100110110011000001100011000010101010011000100000000000000000000000000000000000000000000000111101000000001100111011101110110110010011001100100110110010001100000')).toEqual(position);
     });
   });
 
   describe('decode(shogi64)', function() {
     it('符号化された局面を復号化して返す', function() {
-      expect(shogi64.decode('poU2M2YMYVTEAAAAAAAHoBnd2yZk2Rg')).toEqual(board);
+      expect(shogi64.decode('poU2M2YMYVTEAAAAAAAHoBnd2yZk2Rg')).toEqual(position);
     });
     it('ミックスモードで符号化された局面を復号化して返す', function() {
-      expect(shogi64.decode('3DXTTjAARJIgABSKAtLVPoBz7vrtyZk2Rg')).toEqual(mixboard);
+      expect(shogi64.decode('3DXTTjAARJIgABSKAtLVPoBz7vrtyZk2Rg')).toEqual(mixposition);
     });
   });
 });
