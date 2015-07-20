@@ -594,3 +594,5 @@ if ("process" in global) {
 }
 
 global["shogi64" in global ? "shogi64_" : "shogi64"] = shogi64;
+
+})((this || 0).self || global);
