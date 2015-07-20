@@ -1,5 +1,5 @@
 /**
- * shogi64.js v0.0.2
+ * shogi64.js v0.0.3
  *
  * Copyright (c) 2015 sandai <sandai310@gmail.com>
  * Released under the MIT license
@@ -32,9 +32,9 @@
 
 */
 
-var shogi64 = {};
+var Shogi64 = {};
 
-shogi64.table = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+Shogi64.table = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
 
 // 歩(1)と玉(8)が入っていない
 var pieceHuffmanMap = {
@@ -67,35 +67,35 @@ var pieceHuffmanMap = {
 
 // 玉と歩も入れている。盤面があれなときに利用
 var allPieceHuffmanMap = {
-  '0': '0',
-  '1': '101',
-  '-1': '100',
-  '2': '11001',
-  '-2': '11000',
-  '5': '11011',
-  '-5': '11010',
-  '3': '111001',
-  '-3': '111000',
-  '4': '111101',
-  '-4': '111100',
-  '8': '1110101',
-  '-8': '1110100',
-  '7': '1110111',
-  '-7': '1110110',
-  '6': '1111101',
-  '-6': '1111100',
-  '13': '111111001',
-  '-13': '111111000',
-  '14': '111111011',
-  '-14': '111111010',
-  '9': '111111101',
-  '-9': '111111100',
-  '11': '1111111101',
-  '-11': '1111111100',
-  '12': '11111111101',
-  '-12': '11111111100',
-  '10': '11111111111',
-  '-10': '11111111110'
+  '0'   : '0',
+  '1'   : '101',
+  '-1'  : '100',
+  '2'   : '11001',
+  '-2'  : '11000',
+  '5'   : '11011',
+  '-5'  : '11010',
+  '3'   : '111001',
+  '-3'  : '111000',
+  '4'   : '111101',
+  '-4'  : '111100',
+  '8'   : '1110101',
+  '-8'  : '1110100',
+  '7'   : '1110111',
+  '-7'  : '1110110',
+  '6'   : '1111101',
+  '-6'  : '1111100',
+  '13'  : '111111001',
+  '-13' : '111111000',
+  '14'  : '111111011',
+  '-14' : '111111010',
+  '9'   : '111111101',
+  '-9'  : '111111100',
+  '11'  : '1111111101',
+  '-11' : '1111111100',
+  '12'  : '11111111101',
+  '-12' : '11111111100',
+  '10'  : '11111111111',
+  '-10' : '11111111110'
 };
 
 // プロパティ名は筋の数値で、0は無しを意味する
@@ -113,7 +113,7 @@ var pawnHuffmanMap = {
 
 var handsHuffmanMap = {
   // 歩
-  'FU': [
+  'FU' : [
     '00',
     '01',
     '10',
@@ -124,21 +124,21 @@ var handsHuffmanMap = {
     '1111110',
     '11111110',
     '111111110',
-	  '1111111110',
-	  '11111111110',
-	  '111111111110',
-	  '1111111111110',
-	  '11111111111110',
-	  '111111111111110',
-	  '1111111111111110',
-	  '11111111111111110',
-	  '11111111111111111'],
-  'KY': ['0', '10', '110', '1110', '1111'],
-  'KE': ['0', '10', '110', '1110', '1111'],
-  'GI': ['0', '10', '110', '1110', '1111'],
-  'KI': ['0', '10', '110', '1110', '1111'],
-  'KA':['0', '10', '11'],
-  'HI':['0', '10', '11']
+    '1111111110',
+    '11111111110',
+    '111111111110',
+    '1111111111110',
+    '11111111111110',
+    '111111111111110',
+    '1111111111111110',
+    '11111111111111110',
+    '11111111111111111'],
+  'KY' : ['0', '10', '110', '1110', '1111'],
+  'KE' : ['0', '10', '110', '1110', '1111'],
+  'GI' : ['0', '10', '110', '1110', '1111'],
+  'KI' : ['0', '10', '110', '1110', '1111'],
+  'KA' : ['0', '10', '11'],
+  'HI' : ['0', '10', '11']
 };
 
 var handsPieceMap = {
@@ -155,18 +155,18 @@ function _isArray(arg) {
   return Object.prototype.toString.call(arg) === "[object Array]";
 }
 
-function _validateBoard(board) {
+function _validatePosition(position) {
   // 手番の検査
-  if(typeof(board.turn) !== 'boolean') {
+  if(typeof(position.turn) !== 'boolean') {
     return false;
   }
 
   // 盤駒の検査
-  if(_isArray(board.board) === true) {
+  if(_isArray(position.board) === true) {
 
     // 駒は全て数値かどうか
-    for(var i = 0, l = board.board.length; i < l; i++) {
-      if(-14 > board.board[i] && 14 < board.board[i]) {
+    for(var i = 0, l = position.board.length; i < l; i++) {
+      if(-14 > position.board[i] && 14 < position.board[i]) {
         return false;
       }
     }
@@ -181,17 +181,17 @@ function _validateBoard(board) {
   }
 
   // 持ち駒の検査
-  if(board.hands.black !== undefined &&
-     board.hands.white !== undefined) {
+  if(position.hands.black !== undefined &&
+     position.hands.white !== undefined) {
 
     for(var piece in handsPieceMap) {
 
       // 駒のプロパティをもち、かつ数値か
-      if(typeof(board.hands.black[piece]) === 'number' &&
-         typeof(board.hands.white[piece]) === 'number') {
+      if(typeof(position.hands.black[piece]) === 'number' &&
+         typeof(position.hands.white[piece]) === 'number') {
 
         // 持ち駒の数値は定義されている値か
-        if(handsHuffmanMap[piece][board.hands.black[piece]] === undefined) {
+        if(handsHuffmanMap[piece][position.hands.black[piece]] === undefined) {
           return false;
         }
 
@@ -217,12 +217,12 @@ function _validateBits(bits) {
 
 // encode
 
-function _encodeTurn(turn) {
+function _encodeTurnToBits(turn) {
   // 先手1、 後手0
   return Number(turn);
 }
 
-function _encodeMode(board) {
+function _encodeModeToBits(board) {
   var blackKing = 0,
       whiteKing = 0,
       blackPawn = 0,
@@ -264,7 +264,7 @@ function _encodeMode(board) {
   return '0';
 }
 
-function _encodeBoard(board, mode) {
+function _encodeBoardToBits(board, mode) {
   var ret = '',
       map = (mode === '0') ? pieceHuffmanMap : allPieceHuffmanMap;
 
@@ -323,7 +323,7 @@ function _encodeBoard(board, mode) {
   return ret;
 }
 
-function _encodeHands(hands) {
+function _encodeHandsToBits(hands) {
   var ret = {};
 
   for(var turn in hands) {
@@ -338,17 +338,17 @@ function _encodeHands(hands) {
   return ret.black.join('') + ret.white.join('');
 }
 
-shogi64.encodeBoardToBits = function(board) {
-  if(_validateBoard(board) === false) {
+Shogi64.encodePositionToBits = function(position) {
+  if(_validatePosition(position) === false) {
     throw new Error('board is invalid.');
   }
 
-  var mode = _encodeMode(board.board);
+  var mode = _encodeModeToBits(position.board);
 
-  return  _encodeTurn(board.turn) +  mode + _encodeBoard(board.board, mode) + _encodeHands(board.hands);
+  return  _encodeTurnToBits(position.turn) +  mode + _encodeBoardToBits(position.board, mode) + _encodeHandsToBits(position.hands);
 };
 
-shogi64.encodeBitsToShogi64 = function(bits) {
+Shogi64.encodeBitsToShogi64 = function(bits) {
   if(_validateBits(bits) === false) {
     throw new Error('bits string is invalid.');
   }
@@ -376,17 +376,17 @@ shogi64.encodeBitsToShogi64 = function(bits) {
   return ret;
 };
 
-shogi64.encode = function(board) {
-  if(_validateBoard(board) === false) {
+Shogi64.encode = function(position) {
+  if(_validatePosition(position) === false) {
     throw new Error('board is invalid.');
   }
 
-  return this.encodeBitsToShogi64(this.encodeBoardToBits(board));
+  return this.encodeBitsToShogi64(this.encodePositionToBits(position));
 };
 
 // decode
 
-shogi64.decodeShogi64ToBits = function(shogi64) {
+Shogi64.decodeShogi64ToBits = function(shogi64) {
   if(_validateShogi64(shogi64) === false) {
     throw new Error('shogi64 string is invalid.');
   }
@@ -456,7 +456,7 @@ var huffmanToHandsMap = (function(map) {
 })(handsHuffmanMap);
 
 //手番:1 モード:1 駒の配置:81 持ち駒:14 = 合計97回
-shogi64.decodeBitsToBoard = function(bits) {
+Shogi64.decodeBitsToPosition = function(bits) {
   var ret = {turn: null, board: [], hands: {}},
       count = 97,
       turn = ['black', 'white'],
@@ -581,12 +581,12 @@ shogi64.decodeBitsToBoard = function(bits) {
   return ret;
 };
 
-shogi64.decode = function(shogi64) {
+Shogi64.decode = function(shogi64) {
   if(_validateShogi64(shogi64) === false) {
     throw new Error('shogi64 string is invalid.');
   }
 
-  return this.decodeBitsToBoard(this.decodeShogi64ToBits(shogi64));
+  return this.decodeBitsToPosition(this.decodeShogi64ToBits(shogi64));
 };
 
 if ("process" in global) {
@@ -594,5 +594,3 @@ if ("process" in global) {
 }
 
 global["shogi64" in global ? "shogi64_" : "shogi64"] = shogi64;
-
-})((this || 0).self || global);
