@@ -9,12 +9,12 @@ var gulp = require('gulp'),
     config = require('../config');
 
 gulp.task('build', function() {
-  runSequence('clean', 'jshint:src', 'build:browser', 'build:dev');
+  runSequence('clean', 'jshint:src', 'build:min', 'build:dev');
 });
 
-gulp.task('build:browser', function () {
-  return gulp.src(config.build.browser.src)
-    .pipe(webpack(config.build.browser.webpack))
+gulp.task('build:min', function () {
+  return gulp.src(config.build.min.src)
+    .pipe(webpack(config.build.min.webpack))
     .pipe(header(config.banner))
     .pipe(gulp.dest(config.dest));
 });

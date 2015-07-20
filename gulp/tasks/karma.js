@@ -1,14 +1,12 @@
 "use strict";
 
 var gulp = require('gulp'),
-    karma = require('gulp-karma'),
-    config = require('../config').karma;
+    Server = require('karma').Server,
+    path = require('path');
 
-gulp.task('karma', ['jshint:test'], function () {
-  return gulp.src(config.src)
-    .pipe(karma(config.options))
-    .on('error', function(err) {
-      // Make sure failed tests cause gulp to exit non-zero
-      throw err;
-    });
+gulp.task('karma', ['jshint:test'], function (done) {
+  new Server({
+    configFile: path.resolve('karma.conf.js'),
+    autoWatch: true
+  }, done).start();
 });

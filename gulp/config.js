@@ -24,7 +24,7 @@ module.exports = {
   dest: dest,
 
   build: {
-    browser: {
+    min: {
       src: './lib/main.js',
       webpack: {
         plugins: [
@@ -47,10 +47,10 @@ module.exports = {
       },
       filename: libraryName + '-' + version + '.dev.js',
       src: [
-        './lib/shogi64.prefix',
+        './lib/p.prefix',
         './lib/main.js',
-        './lib/shogi64.exports',
-        './lib/shogi64.suffix'
+        './lib/e.exports',
+        './lib/s.suffix'
       ]
     }
   },
@@ -58,22 +58,5 @@ module.exports = {
   jshint: {
     src: './lib/**/*.js',
     test: './test/*.test.js'
-  },
-
-  karma: {
-    src: './test/*.test.js',
-    options: {
-      configFile: 'karma.conf.js',
-      action: 'watch'
-    }
-  },
-
-  test: {
-    browser: {
-      src: './test/*.test.js',
-      options: {
-        configFile: 'karma.conf.js'
-      }
-    }
   }
 };
