@@ -69,7 +69,15 @@ module.exports = function(config) {
 
     webpackServer: {
       noInfo: true
-    }
+    },
+
+    plugins: [
+      "karma-webpack",
+      "karma-jasmine-html-reporter",
+      'karma-jasmine',
+      'karma-chrome-launcher',
+      'karma-phantomjs-launcher'
+    ]
   });
 };
 
